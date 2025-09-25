@@ -11,16 +11,22 @@
     </field>
   </record>
 
-  <record id="view_it_city_search" model="ir.ui.view">
+ <record id="view_it_city_search" model="ir.ui.view">
     <field name="name">it.city.search</field>
     <field name="model">it.city</field>
     <field name="arch" type="xml">
       <search>
-        <field name="name"/><field name="istat_code"/><field name="province_code"/>
-        <field name="province_name"/><field name="region_name"/><field name="cap"/>
+        <field name="name"/>
+        <field name="istat_code"/>
+        <field name="province_code"/>
+        <field name="province_name"/>
+        <field name="region_name"/>
+        <field name="cap"/>
+        <filter name="has_cap" string="CAP presente" domain="[('cap','!=',False)]"/>
         <group expand="0" string="Raggruppa per">
-          <filter string="Regione" context="{'group_by':'region_name'}"/>
-          <filter string="Provincia" context="{'group_by':'province_name'}"/>
+          <filter name="grp_region" string="Regione" context="{'group_by':'region_name'}"/>
+          <filter name="grp_province" string="Provincia" context="{'group_by':'province_name'}"/>
+          <filter name="grp_sigla" string="Sigla" context="{'group_by':'province_code'}"/>
         </group>
       </search>
     </field>
