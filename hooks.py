@@ -1,5 +1,5 @@
 import json, logging
-from odoo import api, SUPERUSER_ID
+from odoo import SUPERUSER_ID  # (facoltativo, non serve più se usi env già sudo)
 from odoo.modules.module import get_resource_path
 
 _logger = logging.getLogger(__name__)
@@ -7,14 +7,14 @@ _logger = logging.getLogger(__name__)
 DEFAULT_URL = "https://raw.githubusercontent.com/matteocontrini/comuni-json/refs/heads/master/comuni.json"
 
 def _download_json(env):
-    import requests  # external_dependencies
+    import requests
     url = env["ir.config_parameter"].sudo().get_param("l10n_it_comuni.source_url", DEFAULT_URL)
     r = requests.get(url, timeout=30)
     r.raise_for_status()
     return r.json()
 
 def _load_rows(env, rows):
-    City = env["it.city"]
+    City = env["it.city"].sudo()
     existing = {c.istat_code: c.id for c in City.search([])}
     to_create, to_update = [], []
     for row in rows:
@@ -38,8 +38,8 @@ def _load_rows(env, rows):
     for rec_id, vals in to_update:
         City.browse(rec_id).write(vals)
 
-def load_comuni_from_source(cr, registry):
-    env = api.Environment(cr, SUPERUSER_ID, {})
+# 💡 NUOVA firma per Odoo 18: riceve env
+def load_comuni_from_source(env):
     try:
         data = _download_json(env)
         _load_rows(env, data)
